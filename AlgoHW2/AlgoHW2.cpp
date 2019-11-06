@@ -1,4 +1,7 @@
 #include <iostream>
+#include <time.h>
+
+double previousTime = 1;
 
 // Gets the user input
 int getInput() {
@@ -27,7 +30,16 @@ int L(int n) {
 
 // Prints a number num in the Lucas sequence
 void printNum(int num) {
-	printf("%d ", L(num));
+	double startTime = clock();
+	int l = L(num);
+	double endTime = clock();
+	double timeElapsed = (endTime - startTime) / CLOCKS_PER_SEC;
+	printf("L(%d) = %d\nFound in %f seconds\n",num, l, timeElapsed);
+	double ratio = timeElapsed / previousTime;
+	if (num > 0) {
+		printf("Time(L(%d))/Time(L(%d)) = %f\n", num, num - 1, ratio);
+	}
+	previousTime = timeElapsed;
 }
 
 // Prints the Lucas numbers
