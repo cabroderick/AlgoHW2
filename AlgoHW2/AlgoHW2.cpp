@@ -1,5 +1,7 @@
 #include <iostream>
+#include <vector>
 #include <time.h>
+using namespace std;
 
 double previousTime = 1;
 
@@ -12,7 +14,8 @@ int getInput() {
 	return in;
 }
 
-// Calculates the value of the sequence at position num
+// Calculates the value of the sequence at position n
+// n: The position in the Lucas sequence
 int L(int n) {
 	switch (n) {
 	case(0):
@@ -29,6 +32,7 @@ int L(int n) {
 }
 
 // Prints a number num in the Lucas sequence
+// num: The number to be printed
 void printNum(int num) {
 	double startTime = clock();
 	int l = L(num);
@@ -50,55 +54,46 @@ void printSequence(int num) {
 	}
 }
 
-/*
-// Counts the numbers that will reach a number
-// nums: The numbers to work with
-// numSize: The number of numbers to work with
-// target: The number to reach
-// partial: The partial array to be added
-// partialSize: The size of partial
-// partialIndex: The index of partial
-// sumSize: The number of elements to reach the sum; 0 if any
-void countNums(int* nums, int numsSize, int target, int* partial, int partialSize, int partialIndex, int sumSize) {
-	int sum = 0;
-	if (partialSize > sumSize) return;
-	for (int i = 0; i < partialSize; i++) {
-		sum += partial[i];
-	}
-	if (sum == target && partialSize == sumSize) { // If partial adds up to target
-		for (int i = 0; i < partialSize; i++) {
-			printf("%d ", partial[i]);
-		}
-		printf("\n");
-		// print every elt of partial
-	}
-	if (sum >= target) {
-		return;
-	}
-
-	for (int i = 0; i < numsSize; i++) {
-		int n = nums[i]; // Getting elt of nums array
-		int* remaining = nums + (sizeof(int) * i);
-		partial[partialIndex] = n;
-		countNums(remaining, numsSize - 1, target, partial, partialSize + 1, partialIndex + 1, sumSize);
-	}
-}
-
-*/
-
+// Prints all the four-number combos that add to 33
 void count33() {
 	int square[16] = { 1, 14, 14, 4, 11, 7, 6, 9, 8, 10, 10, 5, 13, 2, 3, 15 };
 	for (int i = 0; i <= 15; i++) {
 		for (int j = 1; j <= 15; j++) {
 			for (int k = 2; k <= 15; k++) {
 				for (int l = 3; l <= 15; l++) {
-					if (square[i] + square[j] + square[k] + square[l] == 33 && ~(i & k & k & l) != 0) {
-						printf("Indexes %d %d %d %d\n", i, j, k, l);
+					if (square[i] + square[j] + square[k] + square[l] == 33 && (i!=j && i != k && i != l && j != k && j != l && k != l)) {
+						//printf("Indexes %d %d %d %d\n", i, j, k, l);
 						printf("%d + %d + %d + %d = 33\n", square[i], square[j], square[k], square[l]);
-						// NOT DONE
 					}
 				}
 			}
+		}
+	}
+}
+
+// Finds all combinations for a list numbers
+void findCombos() {
+	int nums[16] = { 1, 14, 14, 4, 11, 7, 6, 9, 8, 10, 10, 5, 13, 2, 3, 15 };
+	int results[133]; // Each index in results indicates a possible sum, and the value at that index indicates how many times that sum was achieved
+	for (int i = 0; i < 133; i++) { // Fills results with 0s
+		results[i] = 0;
+	}
+	// Generates all 16-digit binary permutations
+	for (int i = 0; i <= 65535; i++) {
+		int total = 0;
+		int a = i; // Duplicat of i to be shifted
+		for (int j = 0; j < 16; j++) {
+			int include = a & 1;
+			if (include) {
+				total += nums[j];
+			}
+			a = a >> 1;
+		}
+		results[total]++; // Indexes the total at array value total, which will indicate that that sum was reached one more time
+	}
+	for (int i = 0; i < 133; i++) { // Indexes through results
+		if (results[i] > 0) { // If the given sum appeared at least once
+			printf("%d appeared %d times\n", i, results[i]);
 		}
 	}
 }
@@ -107,6 +102,5 @@ int main() {
 	int in = getInput();
 	printSequence(in);
 	count33();
-	//countNums(nums, 5, 10, partial, 0, 0, 4);
+	findCombos();
 }
-
